@@ -1,56 +1,249 @@
 import streamlit as st
-from openai import OpenAI
+import json
+import time
 
-# Show title and description.
-st.title("💬 Chatbot")
-st.write(
-    "This is a simple chatbot that uses OpenAI's GPT-3.5 model to generate responses. "
-    "To use this app, you need to provide an OpenAI API key, which you can get [here](https://platform.openai.com/account/api-keys). "
-    "You can also learn how to build this app step by step by [following our tutorial](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps)."
-)
+# Configuração da Página
+st.set_page_config(page_title="Enem Compass - MVP", layout="centered")
 
-# Ask user for their OpenAI API key via `st.text_input`.
-# Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
-# via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
-openai_api_key = st.text_input("OpenAI API Key", type="password")
-if not openai_api_key:
-    st.info("Please add your OpenAI API key to continue.", icon="🗝️")
-else:
+# --- 1. CONFIGURAÇÃO E DICIONÁRIOS DE DADOS (MOCK DO INEP) ---
 
-    # Create an OpenAI client.
-    client = OpenAI(api_key=openai_api_key)
+def get_inep_mappings():
+    return {
+        "raca": {"Branca": 1, "Preta": 2, "Parda": 3, "Amarela": 4, "Indígena": 5, "Não declarado": 0},
+        "escolaridade": [
+            "Nunca estudou", "Não completou a 4ª série/5º ano", 
+            "Completou a 4ª série/5º ano, mas não a 8ª série/9º ano",
+            "Completou a 8ª série/9º ano, mas não o Ensino Médio",
+            "Completou o Ensino Médio, mas não a Faculdade",
+            "Completou a Faculdade (Graduação)", "Pós-graduação"
+        ],
+        "renda": [
+            "Nenhuma Renda", "Até R$ 1.212,00", "De R$ 1.212,01 até R$ 1.818,00",
+            "De R$ 1.818,01 até R$ 2.424,00", "De R$ 2.424,01 até R$ 3.030,00",
+            "De R$ 3.030,01 até R$ 4.848,00", "De R$ 4.848,01 até R$ 6.060,00",
+            "De R$ 6.060,01 até R$ 7.272,00", "De R$ 7.272,01 até R$ 8.484,00",
+            "De R$ 8.484,01 até R$ 9.696,00", "De R$ 9.696,01 até R$ 10.908,00",
+            "De R$ 10.908,01 até R$ 12.120,00", "De R$ 12.120,01 até R$ 14.544,00",
+            "De R$ 14.544,01 até R$ 18.180,00", "De R$ 18.180,01 até R$ 24.240,00",
+            "Acima de R$ 24.240,00"
+        ]
+    }
 
-    # Create a session state variable to store the chat messages. This ensures that the
-    # messages persist across reruns.
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+MAPS = get_inep_mappings()
 
-    # Display the existing chat messages via `st.chat_message`.
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+if 'step' not in st.session_state:
+    st.session_state.step = 1
+if 'user_data' not in st.session_state:
+    st.session_state.user_data = {}
 
-    # Create a chat input field to allow the user to enter a message. This will display
-    # automatically at the bottom of the page.
-    if prompt := st.chat_input("What is up?"):
+# Funções de Navegação
+def next_step(): st.session_state.step += 1
+def prev_step(): st.session_state.step -= 1
 
-        # Store and display the current prompt.
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+# --- 2. COMPONENTES DA UI ---
 
-        # Generate a response using the OpenAI API.
-        stream = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": m["role"], "content": m["content"]}
-                for m in st.session_state.messages
-            ],
-            stream=True,
-        )
+def render_header():
+    st.title("🧭 Enem Compass")
+    st.write("Diagnóstico personalizado baseado em dados históricos.")
+    progress_map = {1: 0.25, 2: 0.50, 3: 0.75, 4: 1.0}
+    st.progress(progress_map.get(st.session_state.step, 1.0))
+    st.caption(f"Passo {st.session_state.step} de 4")
+    st.markdown("---")
 
-        # Stream the response to the chat using `st.write_stream`, then store it in 
-        # session state.
-        with st.chat_message("assistant"):
-            response = st.write_stream(stream)
-        st.session_state.messages.append({"role": "assistant", "content": response})
+def step_1_identity():
+    st.header("1. Precisamos saber quem é você! Por favor, preencha a tela abaixo")
+    c1, c2 = st.columns(2)
+    with c1:
+        st.session_state.user_data['idade'] = st.selectbox("Faixa Etária", ["Selecione...","Menor de 17 anos", "17 anos", "18 anos", "19 anos", 
+                                                                            "20 anos","21 anos","22 anos","23 anos","24 anos","25 anos","entre 26 e 30 anos",
+                                                                            "entre 31 e 35","entre 36 e 40 anos","entre 41 e 45 anos","entre 46 e 50 anos",
+                                                                            "entre 51 e 55 anos","entre 56 e 60 anos","entre 61 e 65 anos","entre 66 e 70","Acima de 70 anos"])
+        st.session_state.user_data['sexo'] = st.radio("Sexo", ["Selecione...",
+                                                               "Masculino", 
+                                                               "Feminino"], horizontal=True)
+        st.session_state.user_data['nacionalidade'] = st.selectbox("Nacionalidade", ["Selecione...","Não informado", 
+                                                                                     "Brasileiro(a)", 
+                                                                                     "Brasileiro(a) Naturalizado(a)",
+                                                                                     "Estrangeiro(a)",
+                                                                                     "Brasileiro(a) Nato(a), nascido(a) no exterior"])
+    with c2:
+        st.session_state.user_data['cor_raca'] = st.selectbox("Cor/Raça", list(MAPS['raca'].keys()))
+        st.session_state.user_data['estado_civil'] = st.selectbox("Estado Civil", ["Selecione...",
+                                                                                   "Soleitro(a)", 
+                                                                                   "Casado(a)/Mora com um(a) companheiro(a)",
+                                                                                    "Divorciado(a)/Desquitado(a)/Separado(a)", 
+                                                                                    "Viúvo(a)"])
+        st.session_state.user_data['pessoas_casa'] = st.number_input("Pessoas na casa (incluindo você):", min_value=1, step=1)
+    st.button("Próximo ➡️", on_click=next_step)
+
+def step_2_school():
+    st.header("2. Sua Escola")
+    st.session_state.user_data['situacao_em'] = st.radio("Selecione...",
+                                                         "Situação do Ensino Médio", 
+                                                         ["Já concluí", "Estou cursando o último ano", 
+                                                          "Estou cursando (não concluo este ano)"])
+    c1, c2 = st.columns(2)
+    with c1:
+        st.session_state.user_data['ano_conclusao'] = st.selectbox("Ano de Conclusão", ["Não informado",
+                                                                                        "2015", 
+                                                                                        "2014", "2013", 
+                                                                                        "2012","2011", 
+                                                                                        "2010", "2009",
+                                                                                        "2008", "2007", 
+                                                                                        "Anterior a 2007",])
+        st.session_state.user_data['tipo_escola'] = st.selectbox("Tipo de Escola", ["Selecione...", 
+                                                                                    "Pública",
+                                                                                    "Particular"])
+    with c2:
+        st.session_state.user_data['uf_escola'] = st.selectbox("Estado (UF)", ["SP", "RJ", "MG", "BA", "RS", "Outro"]) 
+        st.session_state.user_data['municipio'] = st.text_input("Município", placeholder="Ex: São Paulo")
+    st.markdown("##### Detalhes da Instituição")
+    st.session_state.user_data['dependencia_adm'] = st.selectbox("Dependência Adm.", ["Estadual", "Municipal", "Federal", "Privada"])
+    st.session_state.user_data['localizacao_esc'] = st.radio("Localização", ["Urbana", "Rural"], horizontal=True)
+    st.session_state.user_data['certificacao'] = st.checkbox("Solicitei certificação do Ensino Médio pelo Enem?")
+    
+    col_nav1, col_nav2 = st.columns([1, 5])
+    with col_nav1: st.button("⬅️ Voltar", on_click=prev_step)
+    with col_nav2: st.button("Próximo ➡️", on_click=next_step)
+
+def step_3_family():
+    st.header("3. Contexto Familiar")
+    c1, c2 = st.columns(2)
+    with c1:
+        st.session_state.user_data['pai_estudo'] = st.selectbox("Pai estudou até:", MAPS['escolaridade'])
+        st.session_state.user_data['mae_estudo'] = st.selectbox("Mãe estudou até:", MAPS['escolaridade'])
+    with c2:
+        ocups = ["Grupo A (Agricultor)", "Grupo B (Serviços)", "Grupo C (Operacional)", "Grupo D (Técnico)", "Grupo E (Superior)", "Não sei"]
+        st.session_state.user_data['pai_ocupacao'] = st.selectbox("Ocupação Pai", ocups)
+        st.session_state.user_data['mae_ocupacao'] = st.selectbox("Ocupação Mãe", ocups)
+    st.markdown("---")
+    st.markdown("**Renda Mensal Familiar**")
+    st.session_state.user_data['renda'] = st.selectbox("Selecione a faixa de renda total:", options=MAPS['renda'], index=None, placeholder="Selecione a faixa...")
+    
+    col_nav1, col_nav2 = st.columns([1, 5])
+    with col_nav1: st.button("⬅️ Voltar", on_click=prev_step)
+    with col_nav2: st.button("Próximo ➡️", on_click=next_step)
+
+def step_4_infrastructure():
+    st.header("4. Infraestrutura")
+    def item_row(label, key):
+        c1, c2 = st.columns([3, 1])
+        with c1: st.write(label)
+        with c2: return st.selectbox(label, ["Não tem"]+[str(i) for i in range(1,4)]+["4+"], key=key, label_visibility="collapsed")
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.session_state.user_data['banheiros'] = item_row("🛁 Banheiros", "q_ban")
+        st.session_state.user_data['quartos'] = item_row("🛏️ Quartos", "q_quar")
+        # --- NOVO: DVD ---
+        st.session_state.user_data['dvd'] = item_row("💿 Aparelhos de DVD", "q_dvd")
+    with c2:
+        st.session_state.user_data['geladeiras'] = item_row("❄️ Geladeiras", "q_gel")
+        # --- NOVO: TV Cores ---
+        st.session_state.user_data['tv_cores'] = item_row("📺 TV em Cores", "q_tv")
+        st.session_state.user_data['computadores'] = item_row("💻 Computadores", "q_pc")
+        
+    st.markdown("---")
+    st.write("**Serviços e Acesso**")
+    c1, c2, c3 = st.columns(3)
+    with c1: st.session_state.user_data['net'] = st.checkbox("🌐 Internet")
+    with c2: st.session_state.user_data['celular'] = st.checkbox("📱 Celular")
+    # --- NOVO: TV Assinatura ---
+    with c3: st.session_state.user_data['tv_assinatura'] = st.checkbox("📡 TV por Assinatura")
+
+    col_nav1, col_nav2 = st.columns([1, 5])
+    with col_nav1: st.button("⬅️ Voltar", on_click=prev_step)
+    with col_nav2: st.button("🚀 ENVIAR DADOS", type="primary", on_click=next_step)
+
+# --- 3. CAMADA DE SERVIÇO (MOCK API & MAPPER) ---
+
+def map_user_data_to_schema(user_data):
+    """
+    Função pura que transforma os dados amigáveis da UI em códigos do Data Lake.
+    """
+    
+    # Helpers de tradução
+    def clean_qtd(val):
+        if val == "Não tem": return 0
+        if val == "4+": return 4
+        return int(val)
+
+    def get_renda_code(val):
+        if not val: return "A" # Fallback
+        idx = MAPS['renda'].index(val)
+        import string
+        letters = string.ascii_uppercase 
+        return letters[idx] if idx < len(letters) else "Q"
+
+    # Construção do Payload
+    payload = {
+        "student_profile": {
+            "metadata": {
+                "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+                "source": "mvp_web_onboarding"
+            },
+            "demographics": {
+                "TP_SEXO": "M" if user_data.get('sexo') == "Masculino" else "F",
+                "TP_COR_RACA": MAPS['raca'].get(user_data.get('cor_raca'), 0),
+                "TP_ESTADO_CIVIL": 1,
+                "Q005": user_data.get('pessoas_casa', 1)
+            },
+            "education_context": {
+                "TP_ESCOLA": 2 if user_data.get('tipo_escola') == "Pública" else 3,
+                "CO_UF_ESC": user_data.get('uf_escola', "SP"), 
+                "NO_MUNICIPIO": user_data.get('municipio'),
+                "IN_CERTIFICADO": 1 if user_data.get('certificacao') else 0
+            },
+            "socioeconomic_questions": {
+                "Q001_PAI": "E", 
+                "Q002_MAE": "E", 
+                "Q006_RENDA": get_renda_code(user_data.get('renda')),
+                "infrastructure": {
+                    # --- ITENS EXISTENTES ---
+                    "Q008_BANHEIRO": clean_qtd(user_data.get('banheiros')),
+                    "Q009_QUARTOS": clean_qtd(user_data.get('quartos')),
+                    "Q012_GELADEIRA": clean_qtd(user_data.get('geladeiras')),
+                    "Q024_COMPUTADOR": clean_qtd(user_data.get('computadores')),
+                    "Q025_INTERNET": 1 if user_data.get('net') else 0,
+                    "Q022_CELULAR": 1 if user_data.get('celular') else 0,
+                    "Q014_TV_CORES": clean_qtd(user_data.get('tv_cores')),
+                    "Q013_DVD": clean_qtd(user_data.get('dvd')),
+                    "Q019_TV_ASSINATURA": 1 if user_data.get('tv_assinatura') else 0
+                }
+            }
+        }
+    }
+    return payload
+
+def send_to_pipeline(payload):
+    with st.spinner('Enviando para o Pipeline de Dados...'):
+        time.sleep(1.5) 
+        return {"status": "success", "cluster_id": "CLS_204", "message": "Dados recebidos e processados."}
+
+# --- 4. TELA FINAL (Step 5) ---
+
+def show_results():
+    final_payload = map_user_data_to_schema(st.session_state.user_data)
+    api_response = send_to_pipeline(final_payload)
+    
+    st.balloons()
+    st.success("Diagnóstico gerado com sucesso!")
+    
+    st.subheader("📦 JSON Enviado ao Pipeline")
+    st.json(final_payload)
+    
+    st.subheader("📩 Resposta da API")
+    st.json(api_response)
+
+    if st.button("Reiniciar Diagnóstico"):
+        st.session_state.step = 1
+        st.session_state.user_data = {}
+        st.rerun()
+
+# --- ROTEAMENTO ---
+render_header()
+if st.session_state.step == 1: step_1_identity()
+elif st.session_state.step == 2: step_2_school()
+elif st.session_state.step == 3: step_3_family()
+elif st.session_state.step == 4: step_4_infrastructure()
+elif st.session_state.step == 5: show_results()

@@ -9,24 +9,33 @@ st.set_page_config(page_title="Enem Compass - MVP", layout="centered")
 
 def get_inep_mappings():
     return {
-        "raca": {"Branca": 1, "Preta": 2, "Parda": 3, "Amarela": 4, "Indígena": 5, "Não declarado": 0},
+        "raca": {"Selecione...":1,"Branca": 2, "Preta": 3, "Parda": 4, "Amarela": 5, "Indígena": 5, "Não declarado": 0},
         "escolaridade": [
-            "Nunca estudou", "Não completou a 4ª série/5º ano", 
-            "Completou a 4ª série/5º ano, mas não a 8ª série/9º ano",
-            "Completou a 8ª série/9º ano, mas não o Ensino Médio",
-            "Completou o Ensino Médio, mas não a Faculdade",
-            "Completou a Faculdade (Graduação)", "Pós-graduação"
+            "Nunca estudou", "Não completou a 4ª série/5º ano do Ensino Fundamental.", 
+            "Completou a 4ª série/5º ano, mas não completou a 8ª série/9º ano do Ensino Fundamental.",
+            "Completou a 8ª série/9º ano do Ensino Fundamental, mas não completou o Ensino Médio.", 
+            "Completou o Ensino Médio, mas não completou a Faculdade.", "Completou a Faculdade, mas não completou a Pós-graduação.", 
+            "Completou a Pós-graduação.", "Não sei."
         ],
         "renda": [
-            "Nenhuma Renda", "Até R$ 1.212,00", "De R$ 1.212,01 até R$ 1.818,00",
-            "De R$ 1.818,01 até R$ 2.424,00", "De R$ 2.424,01 até R$ 3.030,00",
-            "De R$ 3.030,01 até R$ 4.848,00", "De R$ 4.848,01 até R$ 6.060,00",
-            "De R$ 6.060,01 até R$ 7.272,00", "De R$ 7.272,01 até R$ 8.484,00",
-            "De R$ 8.484,01 até R$ 9.696,00", "De R$ 9.696,01 até R$ 10.908,00",
-            "De R$ 10.908,01 até R$ 12.120,00", "De R$ 12.120,01 até R$ 14.544,00",
-            "De R$ 14.544,01 até R$ 18.180,00", "De R$ 18.180,01 até R$ 24.240,00",
-            "Acima de R$ 24.240,00"
-        ]
+            "Nenhuma renda.",
+            "Até R$ 788,00.",
+            "De R$ 788,01 até R$ 1.182,00.",
+            "De R$ 1.182,01 até R$ 1.572,00.",
+            "De R$ 1.572,01 até R$ 1.970,00.",
+            "De R$ 1.970,01 até R$ 2.364,00.",
+            "De R$ 2.364,01 até R$ 3.152,00.",
+            "De R$ 3.152,01 até R$ 3.940,00.",
+            "De R$ 3.940,01 até R$ 4.728,00.",
+            "De R$ 4.728,01 até R$ 5.516,00.",
+            "De R$ 5.516,01 até R$ 6.304,00.",
+            "De R$ 6.304,01 até R$ 7.092,00.",
+            "De R$ 7.092,01 até R$ 7.880,00.",
+            "De R$ 7.880,01 até R$ 9.456,00.",
+            "De R$ 9.456,01 até R$ 11.820,00.",
+            "De R$ 11.820,01 até R$ 15.760,00.",
+            "Mais de 15.760,00."
+        ]       
     }
 
 MAPS = get_inep_mappings()
@@ -51,15 +60,14 @@ def render_header():
     st.markdown("---")
 
 def step_1_identity():
-    st.header("1. Precisamos saber quem é você! Por favor, preencha a tela abaixo")
+    st.header("1. Queremos te conhecer! Por favor, preencha a tela abaixo")
     c1, c2 = st.columns(2)
     with c1:
         st.session_state.user_data['idade'] = st.selectbox("Faixa Etária", ["Selecione...","Menor de 17 anos", "17 anos", "18 anos", "19 anos", 
                                                                             "20 anos","21 anos","22 anos","23 anos","24 anos","25 anos","entre 26 e 30 anos",
                                                                             "entre 31 e 35","entre 36 e 40 anos","entre 41 e 45 anos","entre 46 e 50 anos",
                                                                             "entre 51 e 55 anos","entre 56 e 60 anos","entre 61 e 65 anos","entre 66 e 70","Acima de 70 anos"])
-        st.session_state.user_data['sexo'] = st.radio("Sexo", ["Selecione...",
-                                                               "Masculino", 
+        st.session_state.user_data['sexo'] = st.radio("Sexo", ["Masculino", 
                                                                "Feminino"], horizontal=True)
         st.session_state.user_data['nacionalidade'] = st.selectbox("Nacionalidade", ["Selecione...","Não informado", 
                                                                                      "Brasileiro(a)", 
@@ -73,13 +81,12 @@ def step_1_identity():
                                                                                    "Casado(a)/Mora com um(a) companheiro(a)",
                                                                                     "Divorciado(a)/Desquitado(a)/Separado(a)", 
                                                                                     "Viúvo(a)"])
-        st.session_state.user_data['pessoas_casa'] = st.number_input("Pessoas na casa (incluindo você):", min_value=1, step=1)
+        st.session_state.user_data['pessoas_casa'] = st.number_input("Pessoas na casa (incluindo você):", min_value=0, step=1)
     st.button("Próximo ➡️", on_click=next_step)
 
 def step_2_school():
     st.header("2. Sua Escola")
-    st.session_state.user_data['situacao_em'] = st.radio("Selecione...",
-                                                         "Situação do Ensino Médio", 
+    st.session_state.user_data['situacao_em'] = st.radio("Situação do Ensino Médio", 
                                                          ["Já concluí", "Estou cursando o último ano", 
                                                           "Estou cursando (não concluo este ano)"])
     c1, c2 = st.columns(2)
@@ -95,10 +102,12 @@ def step_2_school():
                                                                                     "Pública",
                                                                                     "Particular"])
     with c2:
-        st.session_state.user_data['uf_escola'] = st.selectbox("Estado (UF)", ["SP", "RJ", "MG", "BA", "RS", "Outro"]) 
+        st.session_state.user_data['uf_escola'] = st.selectbox("Estado (UF)", ["Selecione...","AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
+                                                                                "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", 
+                                                                                "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"]) 
         st.session_state.user_data['municipio'] = st.text_input("Município", placeholder="Ex: São Paulo")
     st.markdown("##### Detalhes da Instituição")
-    st.session_state.user_data['dependencia_adm'] = st.selectbox("Dependência Adm.", ["Estadual", "Municipal", "Federal", "Privada"])
+    st.session_state.user_data['dependencia_adm'] = st.selectbox("Dependência Adm.", ["Selecione...","Estadual", "Municipal", "Federal", "Privada"])
     st.session_state.user_data['localizacao_esc'] = st.radio("Localização", ["Urbana", "Rural"], horizontal=True)
     st.session_state.user_data['certificacao'] = st.checkbox("Solicitei certificação do Ensino Médio pelo Enem?")
     
@@ -113,7 +122,12 @@ def step_3_family():
         st.session_state.user_data['pai_estudo'] = st.selectbox("Pai estudou até:", MAPS['escolaridade'])
         st.session_state.user_data['mae_estudo'] = st.selectbox("Mãe estudou até:", MAPS['escolaridade'])
     with c2:
-        ocups = ["Grupo A (Agricultor)", "Grupo B (Serviços)", "Grupo C (Operacional)", "Grupo D (Técnico)", "Grupo E (Superior)", "Não sei"]
+        ocups = ["Grupo 1 (Lavradores, agricultores sem empregados, bóias-frias e profissionais ligados à criação de animais, pesca, apicultura, extração vegetal e atividades rurais em geral.)", 
+                 "Grupo 2 (Diaristas, domésticos, cuidadores, cozinheiros domésticos, motoristas particulares, faxineiros, vigilantes, porteiros, atendentes, auxiliares administrativos, vendedores, serventes e repositor.)", 
+                 "Grupo 3 (Profissionais de produção e manutenção: padeiros, cozinheiros industriais, costureiros, sapateiros, metalúrgicos, operadores de máquinas, operários de fábrica, mineradores, pedreiros, pintores, eletricistas, encanadores, motoristas e taxistas.)", 
+                 "Grupo 4 (Professores (não universitários), técnicos, policiais, militares de baixa patente, supervisores, gerentes, microempresários, pequenos comerciantes, pequenos proprietários rurais e trabalhadores autônomos.)", 
+                 "Grupo 5 (Médicos, engenheiros, dentistas, psicólogos, advogados, juízes, delegados, oficiais de alta patente, professores universitários, diretores e donos de empresas médias/grandes.)", 
+                 "Não sei"]
         st.session_state.user_data['pai_ocupacao'] = st.selectbox("Ocupação Pai", ocups)
         st.session_state.user_data['mae_ocupacao'] = st.selectbox("Ocupação Mãe", ocups)
     st.markdown("---")
@@ -142,12 +156,12 @@ def step_4_infrastructure():
         # --- NOVO: TV Cores ---
         st.session_state.user_data['tv_cores'] = item_row("📺 TV em Cores", "q_tv")
         st.session_state.user_data['computadores'] = item_row("💻 Computadores", "q_pc")
+        st.session_state.user_data['celulares'] = item_row("📱 Celulares", "q_cel")
         
     st.markdown("---")
     st.write("**Serviços e Acesso**")
     c1, c2, c3 = st.columns(3)
     with c1: st.session_state.user_data['net'] = st.checkbox("🌐 Internet")
-    with c2: st.session_state.user_data['celular'] = st.checkbox("📱 Celular")
     # --- NOVO: TV Assinatura ---
     with c3: st.session_state.user_data['tv_assinatura'] = st.checkbox("📡 TV por Assinatura")
 
@@ -205,9 +219,9 @@ def map_user_data_to_schema(user_data):
                     "Q012_GELADEIRA": clean_qtd(user_data.get('geladeiras')),
                     "Q024_COMPUTADOR": clean_qtd(user_data.get('computadores')),
                     "Q025_INTERNET": 1 if user_data.get('net') else 0,
-                    "Q022_CELULAR": 1 if user_data.get('celular') else 0,
                     "Q014_TV_CORES": clean_qtd(user_data.get('tv_cores')),
                     "Q013_DVD": clean_qtd(user_data.get('dvd')),
+                    "Q022_CELULAR": clean_qtd(user_data.get('celulares')),
                     "Q019_TV_ASSINATURA": 1 if user_data.get('tv_assinatura') else 0
                 }
             }

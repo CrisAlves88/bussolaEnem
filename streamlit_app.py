@@ -2,7 +2,7 @@ import streamlit as st
 import json
 import time
 
-# Configuração da Página
+# Configuração da Págaina
 st.set_page_config(page_title="Enem Compass - MVP", layout="centered")
 
 # --- 1. CONFIGURAÇÃO E DICIONÁRIOS DE DADOS (MOCK DO INEP) ---
@@ -52,7 +52,7 @@ def prev_step(): st.session_state.step -= 1
 # --- 2. COMPONENTES DA UI ---
 
 def render_header():
-    st.title("🧭 Enem Compass")
+    st.title("🧭 Bússola do ENEM")
     st.write("Diagnóstico personalizado baseado em dados históricos.")
     progress_map = {1: 0.25, 2: 0.50, 3: 0.75, 4: 1.0}
     st.progress(progress_map.get(st.session_state.step, 1.0))
@@ -61,6 +61,21 @@ def render_header():
 
 def step_1_identity():
     st.header("1. Queremos te conhecer! Por favor, preencha a tela abaixo")
+    #______________
+    # No código do ALUNO (step_1_identity), adicione isso:
+
+def step_1_identity():
+    st.header("1. Identificação")
+    
+    # --- NOVO CAMPO DE VÍNCULO ---
+    st.info("Se seu professor passou um código de turma, digite abaixo.")
+    st.session_state.user_data['turma_code'] = st.text_input("Código da Turma (Ex: ABC-12)", placeholder="Deixe em branco se não tiver").upper()
+    # -----------------------------
+    
+    st.markdown("---")
+    # ... (Restante dos campos de idade, sexo, etc...)
+
+    #_______________
     c1, c2 = st.columns(2)
     with c1:
         st.session_state.user_data['idade'] = st.selectbox("Faixa Etária", ["Selecione...","Menor de 17 anos", "17 anos", "18 anos", "19 anos", 
@@ -150,7 +165,7 @@ def step_4_infrastructure():
         st.session_state.user_data['banheiros'] = item_row("🛁 Banheiros", "q_ban")
         st.session_state.user_data['quartos'] = item_row("🛏️ Quartos", "q_quar")
         # --- NOVO: DVD ---
-        st.session_state.user_data['dvd'] = item_row("💿 Aparelhos de DVD", "q_dvd")
+        #st.session_state.user_data['dvd'] = item_row("💿 Aparelhos de DVD", "q_dvd")
     with c2:
         st.session_state.user_data['geladeiras'] = item_row("❄️ Geladeiras", "q_gel")
         # --- NOVO: TV Cores ---
@@ -220,7 +235,7 @@ def map_user_data_to_schema(user_data):
                     "Q024_COMPUTADOR": clean_qtd(user_data.get('computadores')),
                     "Q025_INTERNET": 1 if user_data.get('net') else 0,
                     "Q014_TV_CORES": clean_qtd(user_data.get('tv_cores')),
-                    "Q013_DVD": clean_qtd(user_data.get('dvd')),
+                    #"Q013_DVD": clean_qtd(user_data.get('dvd')),
                     "Q022_CELULAR": clean_qtd(user_data.get('celulares')),
                     "Q019_TV_ASSINATURA": 1 if user_data.get('tv_assinatura') else 0
                 }

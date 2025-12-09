@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import time
+import requests
 
 # Configuração da Págaina
 st.set_page_config(page_title="Enem Compass - MVP", layout="centered")
@@ -244,11 +245,52 @@ def map_user_data_to_schema(user_data):
     }
     return payload
 
-def send_to_pipeline(payload):
-    with st.spinner('Enviando para o Pipeline de Dados...'):
-        time.sleep(1.5) 
-        return {"status": "success", "cluster_id": "CLS_204", "message": "Dados recebidos e processados."}
+#def send_to_pipeline(payload):
+#  with st.spinner('Enviando para o Pipeline de Dados...'):
+#        time.sleep(1.5) 
+#        return {"status": "success", "cluster_id": "CLS_204", "message": "Dados recebidos e processados."}
 
+
+
+def send_to_pipeline(payload):
+    """
+    Envia o JSON para a nuvem AWS via API Gateway.
+    """
+    
+    # ---------------------------------------------------------
+    # CONFIGURAÇÃO DA CONEXÃO
+    # Cole aqui a URL que você gerou no passo anterior (API Gateway)
+    # Exemplo: "https://a1b2c3d4.execute-api.us-east-1.amazonaws.com/prod/submit"
+    API_URL = "https://h2ysd0xy7l.execute-api.sa-east-1.amazonaws.com/prod/submit" 
+    # ---------------------------------------------------------
+
+    headers = {"Content-Type": "application/json"}
+
+    with st.spinner('Conectando ao Pipeline de Dados na AWS...'):
+        try:
+            # Envio real via POST
+            response = requests.post(API_URL, json=payload, headers=headers, timeout=15)
+            
+            if response.status_code == 200:
+                data = response.json()
+                return {
+                    "status": "success", 
+                    "server_message": "Dados recebidos na nuvem.",
+                    "id_transacao": data.get('id', 'N/A')
+                }
+            else:
+                return {
+                    "status": "error", 
+                    "code": response.status_code,
+                    "message": f"Erro AWS: {response.text}"
+                }
+                
+        except requests.exceptions.ConnectionError:
+            return {"status": "error", "message": "Falha na conexão. Verifique sua internet."}
+        except Exception as e:
+            return {
+                        "status": "error", "message":str(e)
+                    }
 # --- 4. TELA FINAL (Step 5) ---
 
 def show_results():

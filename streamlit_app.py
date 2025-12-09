@@ -66,12 +66,10 @@ def step_1_identity():
     # No código do ALUNO (step_1_identity), adicione isso:
 
 def step_1_identity():
-    st.header("1. Identificação")
-    
-    # --- NOVO CAMPO DE VÍNCULO ---
-    st.info("Se seu professor passou um código de turma, digite abaixo.")
-    st.session_state.user_data['turma_code'] = st.text_input("Código da Turma (Ex: ABC-12)", placeholder="Deixe em branco se não tiver").upper()
-    # -----------------------------
+    st.header("1. Queremos te conhecer! Por favor, preencha a tela abaixo")
+  
+    st.info("Seu professor passou um código de turma, digite no campo abaixo.")
+    st.session_state.user_data['turma_code'] = st.text_input("Código da Turma (Ex: ABC-12)", placeholder="").upper()
     
     st.markdown("---")
     # ... (Restante dos campos de idade, sexo, etc...)
@@ -101,7 +99,7 @@ def step_1_identity():
     st.button("Próximo ➡️", on_click=next_step)
 
 def step_2_school():
-    st.header("2. Sua Escola")
+    st.header("2. Preencha sobre sua Escola")
     st.session_state.user_data['situacao_em'] = st.radio("Situação do Ensino Médio", 
                                                          ["Já concluí", "Estou cursando o último ano", 
                                                           "Estou cursando (não concluo este ano)"])
@@ -132,11 +130,11 @@ def step_2_school():
     with col_nav2: st.button("Próximo ➡️", on_click=next_step)
 
 def step_3_family():
-    st.header("3. Contexto Familiar")
+    st.header("3. Contexto Familiar - nos conte um pouco sobre sua família")
     c1, c2 = st.columns(2)
     with c1:
-        st.session_state.user_data['pai_estudo'] = st.selectbox("Pai estudou até:", MAPS['escolaridade'])
-        st.session_state.user_data['mae_estudo'] = st.selectbox("Mãe estudou até:", MAPS['escolaridade'])
+        st.session_state.user_data['pai_estudo'] = st.selectbox("Meu pai estudou até:", MAPS['escolaridade'])
+        st.session_state.user_data['mae_estudo'] = st.selectbox("Minha mãe estudou até:", MAPS['escolaridade'])
     with c2:
         ocups = ["Grupo 1 (Lavradores, agricultores sem empregados, bóias-frias e profissionais ligados à criação de animais, pesca, apicultura, extração vegetal e atividades rurais em geral.)", 
                  "Grupo 2 (Diaristas, domésticos, cuidadores, cozinheiros domésticos, motoristas particulares, faxineiros, vigilantes, porteiros, atendentes, auxiliares administrativos, vendedores, serventes e repositor.)", 
@@ -155,7 +153,7 @@ def step_3_family():
     with col_nav2: st.button("Próximo ➡️", on_click=next_step)
 
 def step_4_infrastructure():
-    st.header("4. Infraestrutura")
+    st.header("4. Nos fale sobre sua casa")
     def item_row(label, key):
         c1, c2 = st.columns([3, 1])
         with c1: st.write(label)
@@ -165,21 +163,17 @@ def step_4_infrastructure():
     with c1:
         st.session_state.user_data['banheiros'] = item_row("🛁 Banheiros", "q_ban")
         st.session_state.user_data['quartos'] = item_row("🛏️ Quartos", "q_quar")
-        # --- NOVO: DVD ---
-        #st.session_state.user_data['dvd'] = item_row("💿 Aparelhos de DVD", "q_dvd")
-    with c2:
         st.session_state.user_data['geladeiras'] = item_row("❄️ Geladeiras", "q_gel")
-        # --- NOVO: TV Cores ---
+    with c2:
         st.session_state.user_data['tv_cores'] = item_row("📺 TV em Cores", "q_tv")
         st.session_state.user_data['computadores'] = item_row("💻 Computadores", "q_pc")
         st.session_state.user_data['celulares'] = item_row("📱 Celulares", "q_cel")
         
     st.markdown("---")
-    st.write("**Serviços e Acesso**")
+    st.write("**Na sua casa tem**")
     c1, c2, c3 = st.columns(3)
     with c1: st.session_state.user_data['net'] = st.checkbox("🌐 Internet")
-    # --- NOVO: TV Assinatura ---
-    with c3: st.session_state.user_data['tv_assinatura'] = st.checkbox("📡 TV por Assinatura")
+    with c3: st.session_state.user_data['tv_assinatura'] = st.checkbox("📡 TV por Assinatura e/ou serviço de streaming")
 
     col_nav1, col_nav2 = st.columns([1, 5])
     with col_nav1: st.button("⬅️ Voltar", on_click=prev_step)
@@ -251,7 +245,7 @@ def map_user_data_to_schema(user_data):
 #        return {"status": "success", "cluster_id": "CLS_204", "message": "Dados recebidos e processados."}
 
 
-
+#conexao com a AWS
 def send_to_pipeline(payload):
     """
     Envia o JSON para a nuvem AWS via API Gateway.
@@ -298,7 +292,7 @@ def show_results():
     api_response = send_to_pipeline(final_payload)
     
     st.balloons()
-    st.success("Diagnóstico gerado com sucesso!")
+    st.success("Muito obrigada pelas informações! Agora é com a gente!!")
     
     st.subheader("📦 JSON Enviado ao Pipeline")
     st.json(final_payload)
@@ -306,7 +300,7 @@ def show_results():
     st.subheader("📩 Resposta da API")
     st.json(api_response)
 
-    if st.button("Reiniciar Diagnóstico"):
+    if st.button("Responder novamente"):
         st.session_state.step = 1
         st.session_state.user_data = {}
         st.rerun()

@@ -118,12 +118,12 @@ API_URL = "https://h2ysd0xy7l.execute-api.sa-east-1.amazonaws.com/prod/submit"
 Nota: Em ambiente de produção, recomenda-se mover esta URL para variáveis de ambiente (st.secrets no Streamlit).
 
 ## Roadmap e Próximos Passos
-[x] MVP 1.0: Coleta de dados e Ingestão no S3 (Bronze).
+[X] MVP 1.0: Coleta de dados e Ingestão no S3 (Bronze).
 
-[ ] MVP 1.1: Integração com simulado de questões.
+[X] MVP 1.0: Integração com simulado de questões.
 
-[ ] Backend: Crawler do AWS Glue para catalogar dados na camada Silver.
+[X] Backend: Crawler do AWS Glue para catalogar dados na camada Silver.
 
-[ ] Data Science: Modelo de Clustering para perfilamento do aluno.
+[X] Data Science: Modelo de Clustering para perfilamento do aluno.
 
-[ ] Frontend: Dashboard de Resultados (Aluno) e Portal do Educador.
+[X] Frontend: Dashboard de Resultados (Aluno) e Portal do Educador.

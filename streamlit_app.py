@@ -62,19 +62,16 @@ def render_header():
 
 def step_1_identity():
     st.header("1. Queremos te conhecer! Por favor, preencha a tela abaixo")
-    #______________
-    # No código do ALUNO (step_1_identity), adicione isso:
-
-def step_1_identity():
-    st.header("1. Queremos te conhecer! Por favor, preencha a tela abaixo")
   
-    st.info("Seu professor passou um código de turma, digite no campo abaixo.")
-    st.session_state.user_data['turma_code'] = st.text_input("Código da Turma (Ex: ABC-12)", placeholder="").upper()
+    # --- ALTERAÇÃO: CAMPO RA DO ALUNO ---
+    st.info("Para identificação única, por favor insira seu Registro Acadêmico (RA).")
+    # Removi o .upper() pois RA pode ser numérico ou case sensitive dependendo da escola, 
+    # mas mantive .strip() para limpar espaços em branco
+    st.session_state.user_data['ra_aluno'] = st.text_input("RA do Aluno", placeholder="Digite seu RA aqui").strip()
+    # ------------------------------------
     
     st.markdown("---")
-    # ... (Restante dos campos de idade, sexo, etc...)
-
-    #_______________
+    
     c1, c2 = st.columns(2)
     with c1:
         st.session_state.user_data['idade'] = st.selectbox("Faixa Etária", ["Selecione...","Menor de 17 anos", "17 anos", "18 anos", "19 anos", 
@@ -207,6 +204,9 @@ def map_user_data_to_schema(user_data):
                 "source": "mvp_web_onboarding"
             },
             "demographics": {
+                # --- INCLUSÃO DO RA NO JSON DE SAÍDA ---
+                "ID_RA_ALUNO": user_data.get('ra_aluno'),
+                # ---------------------------------------
                 "TP_SEXO": "M" if user_data.get('sexo') == "Masculino" else "F",
                 "TP_COR_RACA": MAPS['raca'].get(user_data.get('cor_raca'), 0),
                 "TP_ESTADO_CIVIL": 1,
@@ -223,14 +223,12 @@ def map_user_data_to_schema(user_data):
                 "Q002_MAE": "E", 
                 "Q006_RENDA": get_renda_code(user_data.get('renda')),
                 "infrastructure": {
-                    # --- ITENS EXISTENTES ---
                     "Q008_BANHEIRO": clean_qtd(user_data.get('banheiros')),
                     "Q009_QUARTOS": clean_qtd(user_data.get('quartos')),
                     "Q012_GELADEIRA": clean_qtd(user_data.get('geladeiras')),
                     "Q024_COMPUTADOR": clean_qtd(user_data.get('computadores')),
                     "Q025_INTERNET": 1 if user_data.get('net') else 0,
                     "Q014_TV_CORES": clean_qtd(user_data.get('tv_cores')),
-                    #"Q013_DVD": clean_qtd(user_data.get('dvd')),
                     "Q022_CELULAR": clean_qtd(user_data.get('celulares')),
                     "Q019_TV_ASSINATURA": 1 if user_data.get('tv_assinatura') else 0
                 }
@@ -238,12 +236,6 @@ def map_user_data_to_schema(user_data):
         }
     }
     return payload
-
-#def send_to_pipeline(payload):
-#  with st.spinner('Enviando para o Pipeline de Dados...'):
-#        time.sleep(1.5) 
-#        return {"status": "success", "cluster_id": "CLS_204", "message": "Dados recebidos e processados."}
-
 
 #conexao com a AWS
 def send_to_pipeline(payload):
@@ -253,8 +245,6 @@ def send_to_pipeline(payload):
     
     # ---------------------------------------------------------
     # CONFIGURAÇÃO DA CONEXÃO
-    # Cole aqui a URL que você gerou no passo anterior (API Gateway)
-    # Exemplo: "https://a1b2c3d4.execute-api.us-east-1.amazonaws.com/prod/submit"
     API_URL = "https://h2ysd0xy7l.execute-api.sa-east-1.amazonaws.com/prod/submit" 
     # ---------------------------------------------------------
 
@@ -285,6 +275,7 @@ def send_to_pipeline(payload):
             return {
                         "status": "error", "message":str(e)
                     }
+
 # --- 4. TELA FINAL (Step 5) ---
 
 def show_results():

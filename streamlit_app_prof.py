@@ -1,136 +1,181 @@
 import streamlit as st
+import pandas as pd
+import plotly.express as px
 import random
-import string
-import time
 
-# Configuração da Página
-st.set_page_config(page_title="Portal do Educador - Enem Compass", layout="wide", page_icon="🏫")
+# ==============================================================================
+# 1. CONFIGURAÇÃO DE PÁGINA E ESTILOS
+# ==============================================================================
+st.set_page_config(page_title="Bússola do ENEM - Painel do Educador", layout="wide", page_icon="🧭")
 
-# --- MOCK DATABASE (Simulando o Backend) ---
-if 'schools_db' not in st.session_state:
-    st.session_state.schools_db = []
-if 'generated_classes' not in st.session_state:
-    st.session_state.generated_classes = []
+st.markdown("""
+<style>
+    div[data-testid="stMetric"] { background-color: #ffffff !important; border: 1px solid #e0e0e0; }
+    div[data-testid="stMetric"] label { color: #666666 !important; }
+    div[data-testid="stMetric"] div[data-testid="stMetricValue"] { color: #222222 !important; }
+    .cluster-badge { padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; }
+</style>
+""", unsafe_allow_html=True)
 
-# --- FUNÇÕES UTILITÁRIAS ---
+# ==============================================================================
+# 2. METADADOS DOS CLUSTERS (Regras de Negócio)
+# ==============================================================================
+CLUSTER_METADATA = {
+    -1: {
+        "nome": "Brasil Profundo", "cor": "#D32F2F", 
+        "perfil": "Vulnerabilidade extrema.", "acao": ["Materiais impressos", "Busca ativa"],
+        "diagnostico": "Dificuldades básicas e instabilidade.", 
+        "storytelling": "Provável trabalho precoce ou responsabilidades familiares."
+    },
+    0: {
+        "nome": "Classe Média Tradicional", "cor": "#FBC02D", 
+        "perfil": "Acesso moderado, desorganizado.", "acao": ["Técnicas de prova", "Checklists"],
+        "diagnostico": "Falta método. Erra questões fáceis.", 
+        "storytelling": "Tem recursos básicos, mas sem hábito de estudo."
+    },
+    1: {
+        "nome": "O Lutador", "cor": "#F57C00", 
+        "perfil": "Esforço alto, estuda errado.", "acao": ["Pomodoro", "Laboratório Redação"],
+        "diagnostico": "Estuda por repetição.", 
+        "storytelling": "Dedicado, mas o desempenho trava."
+    },
+    2: {
+        "nome": "Guerreiro (Baixa Infra)", "cor": "#7B1FA2", 
+        "perfil": "Pouca posse, alto desempenho.", "acao": ["Bolsas", "Simulados"],
+        "diagnostico": "Autonomia alta.", 
+        "storytelling": "Resiliente. Faz muito com pouco."
+    },
+    3: {
+        "nome": "Elite Estruturada", "cor": "#1976D2", 
+        "perfil": "Recursos altos, ansiedade.", "acao": ["Gestão emocional", "Debates"],
+        "diagnostico": "Oscilação emocional.", 
+        "storytelling": "Suporte familiar, mas trava sob pressão."
+    },
+    4: {
+        "nome": "Super-Elite", "cor": "#388E3C", 
+        "perfil": "Topo desempenho.", "acao": ["PBL", "Olimpíadas"],
+        "diagnostico": "Falta propósito.", 
+        "storytelling": "Desafio é manter engajamento."
+    }
+}
 
-def generate_class_code():
-    """Gera um código único curto (ex: A7X-22) para o aluno digitar."""
-    chars = string.ascii_uppercase + string.digits
-    code = ''.join(random.choice(chars) for _ in range(6))
-    return f"{code[:3]}-{code[3:]}"
-
-def save_school_data(data):
-    """Simula o salvamento no Banco de Dados/S3"""
-    time.sleep(1) # Fake loading
-    st.session_state.schools_db.append(data)
-    # Aqui entraria o código para salvar no AWS DynamoDB ou RDS
-    return True
-
-# --- INTERFACE DO USUÁRIO ---
-
-def render_sidebar():
-    with st.sidebar:
-        st.header("🏫 Menu Professor")
-        st.info("Bem-vindo ao Enem Compass for Schools.")
-        st.markdown("---")
-        st.markdown("""
-        **Como funciona:**
-        1. Cadastre sua escola.
-        2. Crie uma turma.
-        3. Compartilhe o **Código** com seus alunos.
-        4. Receba o relatório consolidado.
-        """)
-
-def render_school_registration():
-    st.title("🏫 Cadastro de Instituição e Turmas")
-    st.write("Preencha os dados para habilitar o diagnóstico dos seus alunos.")
-
-    with st.form("school_register_form"):
-        st.subheader("1. Dados do Educador")
-        c1, c2 = st.columns(2)
-        with c1:
-            teacher_name = st.text_input("Nome do Professor/Coordenador")
-        with c2:
-            teacher_email = st.text_input("Email Institucional")
-
-        st.subheader("2. Dados da Escola")
-        st.warning("💡 O Código INEP é essencial para cruzarmos os dados com o histórico oficial do governo.")
+# ==============================================================================
+# 3. LEITURA DE DADOS (MODO ARQUIVO LOCAL - SEM AWS)
+# ==============================================================================
+@st.cache_data
+def load_data():
+    try:
+        # Tenta ler o arquivo CSV que você baixou
+        df = pd.read_csv("dados_gold.csv")
         
-        c3, c4 = st.columns([1, 3])
-        with c3:
-            inep_code = st.text_input("Código INEP da Escola", max_chars=8, help="Código de 8 dígitos do censo escolar.")
-        with c4:
-            school_name = st.text_input("Nome da Escola")
-
-        c5, c6, c7 = st.columns(3)
-        with c5:
-            uf = st.selectbox("Estado (UF)", ["SP", "RJ", "MG", "BA", "RS", "Outro"])
-        with c6:
-            city = st.text_input("Município")
-        with c7:
-            admin_dep = st.selectbox("Dependência Administrativa", ["Estadual", "Municipal", "Federal", "Privada"])
-
-        st.subheader("3. Criação da Turma Inicial")
-        class_name = st.text_input("Nome da Turma para Análise", placeholder="Ex: 3º Ano A - Matutino")
-
-        # Botão de Submit
-        submitted = st.form_submit_button("✅ Cadastrar e Gerar Código para Alunos", type="primary")
-
-        if submitted:
-            if not teacher_name or not school_name or not class_name:
-                st.error("Por favor, preencha os campos obrigatórios.")
-            else:
-                # Lógica de Sucesso
-                new_code = generate_class_code()
-                
-                school_payload = {
-                    "teacher": teacher_name,
-                    "email": teacher_email,
-                    "inep": inep_code,
-                    "school": school_name,
-                    "uf": uf,
-                    "city": city,
-                    "type": admin_dep,
-                    "class_name": class_name,
-                    "class_code": new_code, # CHAVE DE VÍNCULO
-                    "created_at": time.strftime("%Y-%m-%d")
-                }
-                
-                save_school_data(school_payload)
-                st.session_state.last_created_code = new_code
-                st.session_state.last_created_class = class_name
-                st.success("Escola e Turma cadastradas com sucesso!")
-
-def render_dashboard_view():
-    """Tela de Sucesso após cadastro"""
-    if 'last_created_code' in st.session_state:
-        st.markdown("---")
-        st.header("🎉 Tudo pronto!")
+        # AJUSTE DE COLUNAS (DE-PARA)
+        # O CSV da gold geralmente vem com nomes técnicos, vamos padronizar:
+        # Tenta identificar colunas comuns e renomear
+        cols_map = {
+            "id_ra_aluno": "id_ra",
+            "cluster": "cluster",
+            "nota_prevista": "nota_projetada",
+            "nota_projetada": "nota_projetada", # Caso já venha certo
+            "frequencia": "frequencia",
+            "ponto_fraco": "ponto_fraco"
+        }
+        df = df.rename(columns=cols_map)
         
-        col_destaque, col_info = st.columns([2, 3])
+        # Garante que as colunas existem (se não existirem no CSV, cria fake)
+        if "id_ra" not in df.columns: df["id_ra"] = [f"2024{i}" for i in range(len(df))]
+        if "cluster" not in df.columns: df["cluster"] = [random.choice([0,1,2]) for _ in range(len(df))]
+        if "nota_projetada" not in df.columns: df["nota_projetada"] = [random.randint(400,800) for _ in range(len(df))]
+        if "frequencia" not in df.columns: df["frequencia"] = [random.randint(70,100) for _ in range(len(df))]
+        if "ponto_fraco" not in df.columns: df["ponto_fraco"] = [random.choice(["Matemática", "Redação"]) for _ in range(len(df))]
+
+        # Limpeza de tipos
+        df['cluster'] = df['cluster'].fillna(0).astype(int)
+        df['nota_projetada'] = df['nota_projetada'].fillna(0).astype(int)
         
-        with col_destaque:
-            st.info(f"""
-            ### Código da Turma:
-            # `{st.session_state.last_created_code}`
-            """)
-            st.caption("Peça para os alunos digitarem este código no início do questionário.")
-        
-        with col_info:
-            st.subheader(f"Turma: {st.session_state.last_created_class}")
-            st.write("🔗 **Link direto para alunos (Simulação):**")
-            st.code(f"https://enem-compass.app/aluno?code={st.session_state.last_created_code}")
+        # Cria nome fake se não tiver
+        if 'nome' not in df.columns:
+            df['nome'] = df['id_ra'].apply(lambda x: f"Estudante {str(x)[-4:]}")
             
-            st.markdown("#### 📊 O que acontece agora?")
-            st.write("""
-            1. O aluno preenche o diagnóstico.
-            2. Nosso Pipeline processa as lacunas de aprendizado.
-            3. O sistema cruza com o perfil socioeconômico.
-            4. **Você recebe um PDF com:** "Alunos de baixa renda desta turma estão com dificuldade crítica em Geometria, desviando 30% da média de escolas semelhantes".
-            """)
+        return df, None
 
-# --- RENDERIZAÇÃO PRINCIPAL ---
-render_sidebar()
-render_school_registration()
-render_dashboard_view()
+    except FileNotFoundError:
+        return None, "Arquivo 'dados_gold.csv' não encontrado. Faça o upload dele para a pasta."
+    except Exception as e:
+        return None, f"Erro ao ler CSV: {str(e)}"
+
+# Carrega os dados
+df_raw, error = load_data()
+
+# ==============================================================================
+# 4. INTERFACE DO DASHBOARD
+# ==============================================================================
+if error:
+    st.error("❌ ERRO: Precisamos do arquivo de dados.")
+    st.warning(f"Detalhe: {error}")
+    st.info("💡 Solução: Baixe o CSV da URL que você tem, renomeie para 'dados_gold.csv' e arraste para a pasta deste projeto.")
+    st.stop()
+
+# --- SIDEBAR ---
+with st.sidebar:
+    st.header("🏫 Filtros")
+    clusters_sel = st.multiselect("Perfil:", options=sorted(df_raw['cluster'].unique()), default=sorted(df_raw['cluster'].unique()))
+    df_filtered = df_raw[df_raw['cluster'].isin(clusters_sel)]
+    st.write(f"Alunos: {len(df_filtered)}")
+
+# --- MAIN ---
+st.title("🧭 Bússola do ENEM")
+
+c1, c2, c3 = st.columns(3)
+c1.metric("Média Turma", f"{df_filtered['nota_projetada'].mean():.0f}")
+c2.metric("Total Alunos", len(df_filtered))
+c3.metric("Risco (Cluster -1)", len(df_filtered[df_filtered['cluster'] == -1]))
+
+st.divider()
+
+c_chart, c_table = st.columns([1, 2])
+
+with c_chart:
+    st.subheader("Distribuição")
+    counts = df_filtered['cluster'].value_counts().reset_index()
+    counts['Nome'] = counts['cluster'].map(lambda x: CLUSTER_METADATA.get(x, {}).get('nome'))
+    counts['Cor'] = counts['cluster'].map(lambda x: CLUSTER_METADATA.get(x, {}).get('cor', '#ccc'))
+    fig = px.pie(counts, values='count', names='Nome', color='Nome', 
+                 color_discrete_map={r['Nome']: r['Cor'] for _, r in counts.iterrows()})
+    fig.update_layout(showlegend=False, height=250, margin=dict(t=0,b=0,l=0,r=0))
+    st.plotly_chart(fig, use_container_width=True)
+
+with c_table:
+    st.subheader("Lista de Alunos")
+    df_show = df_filtered.copy()
+    df_show['Perfil'] = df_show['cluster'].map(lambda x: CLUSTER_METADATA.get(x, {}).get('nome'))
+    
+    selection = st.dataframe(
+        df_show[['id_ra', 'nome', 'Perfil', 'nota_projetada', 'ponto_fraco']],
+        column_config={"nota_projetada": st.column_config.ProgressColumn("Nota", format="%d", min_value=0, max_value=1000)},
+        use_container_width=True, hide_index=True, selection_mode="single-row", on_select="rerun", height=300
+    )
+
+if selection.selection.rows:
+    aluno = df_show.iloc[selection.selection.rows[0]]
+    meta = CLUSTER_METADATA.get(aluno['cluster'], {})
+    
+    st.divider()
+    st.header(f"👤 {aluno['nome']}")
+    
+    col_l, col_r = st.columns([1, 3])
+    with col_l:
+        st.markdown(f"""
+        <div style="background:{meta.get('cor')}; padding:15px; border-radius:10px; color:white; text-align:center;">
+            <h1>{aluno['nota_projetada']}</h1>
+            <p>{meta.get('nome')}</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_r:
+        t1, t2 = st.tabs(["Diagnóstico", "Plano de Ação"])
+        with t1:
+            st.write(f"_{meta.get('storytelling')}_")
+            st.info(meta.get('diagnostico'))
+        with t2:
+            for acao in meta.get('acao', []):
+                st.checkbox(acao, key=acao)

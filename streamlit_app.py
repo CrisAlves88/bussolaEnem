@@ -4,7 +4,7 @@ import time
 import requests
 
 # Configuração da Págaina
-st.set_page_config(page_title="Enem Compass - MVP", layout="centered")
+st.set_page_config(page_title="Bússola ENEM - MVP", layout="centered")
 
 # --- 1. CONFIGURAÇÃO E DICIONÁRIOS DE DADOS (MOCK DO INEP) ---
 

@@ -1,0 +1,61 @@
+created_at,source,id_ra_aluno,tp_sexo,tp_cor_raca,tp_estado_civil,q005,tp_faixa_etaria,tp_escola,co_uf_esc,no_municipio_esc,in_certificado,tp_dependencia_adm_esc,tp_localizacao_esc,q001,q002,q006,q003,q004,q008,q009,q010,q011,q012,q019,q020,q022,q024,q025,q021,score_norm_pred,cluster_pred,cluster_label
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202300025,F,4,0,8,20,3,BA,Livramento de Nossa Senhora,0,3,1,D,H,K,E,D,3,2,1,2,2,0,1,3,2,1,missing,72.45538034364425,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202200043,F,0,1,6,6,2,PE,São Lourenço da Mata,1,4,2,C,F,C,A,B,2,3,1,2,3,2,1,3,2,1,missing,68.51086714487822,3,Acima da média
+2025-12-11 18:50:03,script_massa_teste_vFinal_carro_moto,RA202000009,F,4,3,4,17,2,RS,Porto Alegre,1,4,2,E,A,D,A,F,2,1,3,0,2,4,0,3,2,1,missing,67.92129108947118,3,Acima da média
+2025-12-11 18:50:03,script_massa_teste_vFinal_carro_moto,RA202400006,F,0,3,8,20,2,RJ,Rio de Janeiro,0,3,1,C,F,M,B,E,1,4,3,2,2,4,1,3,1,1,missing,60.23855955898683,2,Médio
+2025-12-11 18:50:03,script_massa_teste_vFinal_carro_moto,RA202100003,F,2,2,4,16,2,RS,Caxias do Sul,0,1,2,C,E,L,F,D,3,2,1,2,1,3,0,3,2,0,missing,68.88795094757612,3,Acima da média
+2025-12-11 18:50:03,script_massa_teste_vFinal_carro_moto,RA202200004,M,3,0,4,9,2,MG,Belo Horizonte,0,2,2,C,B,N,C,C,3,4,3,1,4,2,1,4,1,0,missing,54.71490499646478,1,Abaixo da média
+2025-12-11 18:50:03,script_massa_teste_vFinal_carro_moto,RA202300005,F,1,0,8,5,3,SC,Florianópolis,1,4,1,H,F,L,D,F,1,2,3,1,3,4,1,1,2,1,missing,71.93041216555243,0,Baixo desempenho
+2025-12-11 18:50:03,script_massa_teste_vFinal_carro_moto,RA202300008,M,1,4,8,9,2,SC,Florianópolis,0,2,1,C,G,F,F,F,2,3,1,0,2,2,1,1,2,1,missing,55.33271671007568,1,Abaixo da média
+2025-12-11 18:50:03,script_massa_teste_vFinal_carro_moto,RA202000001,F,6,4,3,3,3,RS,Porto Alegre,1,1,1,G,F,L,D,E,0,2,2,0,4,0,0,3,0,1,missing,72.99595041625358,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202100035,M,3,3,1,10,3,SC,Jaraguá do Sul,0,2,2,H,D,Q,E,A,3,3,0,0,2,3,0,2,1,1,missing,54.06463045465763,4,Alto desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202100021,F,1,2,1,4,3,CE,Guaraciaba do Norte,0,1,1,D,G,E,F,C,0,4,1,0,4,2,1,1,2,0,missing,70.95311522001458,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202000020,M,0,2,7,18,3,MG,Pará de Minas,1,2,1,F,C,C,B,A,3,4,0,2,1,4,0,3,2,0,missing,54.00031535387008,4,Alto desempenho
+2025-12-11 18:50:03,script_massa_teste_vFinal_carro_moto,RA202000007,F,5,1,8,4,2,MG,Contagem,0,4,1,F,B,M,B,E,3,1,0,0,1,1,1,1,1,0,missing,63.22300127976477,2,Médio
+2025-12-11 18:50:03,script_massa_teste_vFinal_carro_moto,RA202400010,M,5,4,4,20,3,AM,Manaus,1,1,1,B,A,H,B,D,2,2,0,1,3,4,1,4,3,1,missing,69.55063269256327,0,Baixo desempenho
+2025-12-11 18:50:03,script_massa_teste_vFinal_carro_moto,RA202300002,F,1,1,4,17,3,AM,Manaus,1,4,1,B,B,P,A,E,4,1,0,0,2,4,1,3,3,0,missing,68.25138071294782,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202100036,M,4,1,2,9,2,PE,Belo Jardim,1,3,1,H,G,G,A,E,2,2,2,1,4,2,0,2,2,0,missing,60.15668070421001,2,Médio
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202000006,M,0,0,1,14,2,RS,Caxias do Sul,1,3,1,E,G,D,B,F,4,3,1,2,3,1,0,4,2,0,missing,60.35739586406228,2,Médio
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202400034,M,6,1,6,15,3,SP,Hortolândia,1,3,2,C,F,E,D,C,1,1,1,2,2,4,1,4,2,1,missing,71.87427063623502,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202200026,F,5,4,3,19,3,AM,Manicoré,1,4,1,A,H,K,C,C,0,3,3,0,3,0,1,1,3,1,missing,67.97675435063539,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202300042,M,3,4,4,14,3,CE,Fortaleza,0,4,2,B,G,M,C,F,4,4,2,0,4,0,0,4,3,0,missing,69.0787139456157,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202300024,M,5,1,2,3,3,MG,Pouso Alegre,0,3,1,G,G,H,E,F,3,1,2,0,3,2,0,3,3,0,missing,72.47392925810755,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202200018,M,1,3,5,2,2,MG,Manhuaçu,1,4,2,A,B,K,A,D,0,1,3,1,2,1,1,3,1,0,missing,68.19619427461367,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202300046,M,6,3,6,9,2,RJ,Teresópolis,1,4,1,G,F,E,A,B,2,4,2,2,3,3,1,2,0,0,missing,68.52348857420337,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202300050,M,3,1,8,17,2,BA,Monte Santo,0,4,1,H,H,K,A,D,4,2,1,1,3,0,1,3,3,1,missing,67.92129108947118,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202400048,F,1,2,4,10,3,RJ,Mangaratiba,1,1,2,G,H,J,B,A,1,3,3,0,4,4,1,1,3,1,missing,70.13961850445016,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202100009,F,1,3,7,17,2,SC,Biguaçu,0,1,2,A,A,Q,D,D,1,2,3,2,4,4,0,3,0,1,missing,73.15250843622847,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202400004,F,6,4,2,5,2,SC,Curitibanos,1,4,1,B,G,P,A,E,3,4,3,0,1,3,0,3,3,1,missing,69.22805456683423,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202200010,F,5,1,3,10,3,MG,Ouro Preto,0,3,1,D,C,F,F,D,0,3,1,2,4,2,0,2,0,1,missing,62.77860014942779,2,Médio
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202400037,F,5,0,6,15,2,CE,Itarema,1,2,1,E,D,Q,B,D,2,1,0,0,1,2,0,1,0,0,missing,55.06419648893854,1,Abaixo da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202000031,M,1,1,7,1,2,SP,São Carlos,1,2,2,D,D,J,B,D,3,4,0,2,3,3,0,1,2,0,missing,62.64814529684518,2,Médio
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202400044,F,3,4,2,7,3,MG,Araguari,0,3,2,E,E,O,E,B,1,2,1,2,1,1,1,4,0,1,missing,68.65010021601346,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202000015,M,0,3,8,4,2,SC,Blumenau,1,4,1,A,F,H,B,B,1,1,1,2,2,1,1,3,2,1,missing,63.5645254410287,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202200047,M,0,1,5,10,2,AM,Eirunepé,0,4,2,A,D,B,E,A,4,4,2,1,3,1,1,3,3,0,missing,68.02441802026982,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202300049,F,1,4,5,11,3,SC,Criciúma,0,1,1,F,G,L,B,C,4,3,3,2,2,0,0,4,1,0,missing,71.14249870968301,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202000040,F,2,4,1,1,3,CE,Boa Viagem,1,4,2,H,C,A,A,D,4,3,3,2,4,0,0,2,0,1,missing,68.01205997733945,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202000003,M,6,3,8,1,3,SC,Concórdia,1,4,1,H,G,K,F,F,4,4,3,2,2,2,1,1,0,0,missing,69.12918126537164,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202200033,M,1,1,7,13,3,SP,Mauá,1,3,1,D,B,P,F,E,0,3,2,1,2,2,1,1,0,0,missing,61.8168329718151,2,Médio
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202200045,F,3,2,2,2,3,PR,Paiçandu,0,3,1,E,A,Q,F,C,2,2,0,0,4,0,1,3,1,0,missing,62.543564364114026,2,Médio
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202400002,M,5,4,3,20,3,CE,Massapê,0,3,1,B,B,F,E,A,4,3,1,2,1,3,1,2,0,1,missing,72.47392925810755,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202100028,F,6,3,4,6,3,PE,Pesqueira,0,3,1,F,F,Q,F,D,1,4,0,0,2,0,0,3,1,0,missing,63.25305374299649,2,Médio
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202400012,F,6,2,2,9,3,RJ,Itaperuna,0,3,1,E,G,J,F,B,2,4,2,2,1,1,1,1,3,0,missing,61.57619823417328,2,Médio
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202100011,M,6,4,8,6,2,PE,Goiana,0,3,2,G,A,O,C,E,2,3,1,1,3,1,1,1,1,0,missing,60.176177055852435,2,Médio
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202100008,M,1,1,4,1,2,PE,Araripina,1,1,1,F,E,K,B,F,1,1,2,1,2,0,0,2,2,0,missing,70.97233644593447,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202300029,M,4,4,7,20,2,AM,Careiro,0,4,1,C,A,L,A,E,3,4,0,2,1,3,0,1,1,0,missing,68.17804725743467,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202400022,F,5,1,6,13,2,PE,Carpina,1,2,2,G,G,P,A,B,2,4,0,2,3,0,1,2,2,1,missing,53.47795249919159,4,Alto desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202200014,M,4,0,5,3,2,SP,Taubaté,0,4,2,G,C,N,F,E,2,2,1,1,4,2,1,2,1,1,missing,68.32347769477403,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202200013,F,0,3,6,20,3,PE,Surubim,0,2,2,F,E,P,B,F,3,3,1,0,2,2,0,3,2,1,missing,54.588181442519996,4,Alto desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202000016,M,5,0,5,4,2,SC,Biguaçu,0,4,2,E,D,P,C,F,1,2,1,2,4,4,0,1,0,1,missing,63.34066274679173,2,Médio
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202100041,F,0,3,1,5,3,AM,Codajás,1,3,2,H,C,G,D,D,2,4,2,0,4,2,1,1,0,0,missing,70.31520548363969,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202200019,F,2,3,5,18,2,SC,Itapema,1,2,1,D,B,N,E,F,2,4,0,1,3,0,1,2,1,1,missing,54.588181442519996,4,Alto desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202100023,F,0,2,5,4,2,BA,Juazeiro,0,2,1,B,B,O,B,D,0,1,2,0,2,1,1,2,3,0,missing,57.27809014835857,1,Abaixo da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202100038,F,1,1,6,3,3,PE,Gravatá,1,3,2,F,A,D,A,D,1,2,0,2,1,1,1,4,0,1,missing,64.24915394092628,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202100039,M,1,1,2,19,3,PR,Cambé,1,1,2,D,G,P,B,E,0,2,3,0,1,4,1,1,3,1,missing,70.23279577630144,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202000032,F,1,2,5,6,2,SP,Diadema,1,3,1,A,B,Q,B,F,0,2,0,1,1,0,0,1,0,1,missing,60.695660277319355,2,Médio
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202000017,F,2,1,3,20,2,RS,Canela,0,4,2,D,H,P,F,E,1,3,0,0,3,4,0,1,3,1,missing,68.17804725743467,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202000005,F,2,2,7,17,3,CE,Trairi,0,4,1,B,B,F,F,D,2,1,0,1,3,3,0,2,0,1,missing,67.95779161167499,3,Acima da média
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202000007,F,2,0,5,2,2,AM,Lábrea,0,3,2,G,H,H,E,E,3,4,0,0,3,0,0,1,1,1,missing,72.48448683679617,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202400001,F,5,4,6,7,3,CE,Trairi,1,2,1,A,B,G,E,A,4,3,0,1,1,1,0,2,3,1,missing,53.68611777498582,4,Alto desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202300027,M,6,2,5,17,2,SP,Cotia,1,1,2,G,F,E,E,A,0,4,1,2,1,2,1,1,1,0,missing,72.47392925810755,0,Baixo desempenho
+2025-12-11 19:41:28,script_massa_teste_streamlit,RA202300030,M,1,2,3,8,2,AM,Coari,1,2,1,C,B,N,B,D,3,2,2,1,3,4,1,3,0,0,missing,55.56126208308498,1,Abaixo da média

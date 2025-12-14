@@ -4,7 +4,7 @@ import time
 
 # --- CONFIGURAÇÃO ---
 API_URL = "https://h2ysd0xy7l.execute-api.sa-east-1.amazonaws.com/prod/submit"
-ARQUIVO_MASSA = "massa_teste_enem.json"
+ARQUIVO_MASSA = "massa_teste_alunos.json"
 
 def enviar_massa():
     # 1. Carrega os dados gerados
@@ -22,7 +22,7 @@ def enviar_massa():
             response = requests.post(API_URL, json=payload, headers={"Content-Type": "application/json"}, timeout=10)
             
             if response.status_code == 200:
-                print(f"[{i+1}] ✅ Sucesso - RA: {payload['student_profile']['demographics']['ID_RA_ALUNO']}")
+                print(f"[{i+1}] ✅ Sucesso - RA: {payload['id_ra_aluno']}")
                 sucessos += 1
             else:
                 print(f"[{i+1}] ❌ Erro {response.status_code}: {response.text}")

@@ -125,17 +125,33 @@ def gerar_dados_ficticios(n=150):
     return pd.DataFrame(dados)
 
 def get_aws_session():
-    """Tenta criar sessão AWS via secrets do Streamlit."""
-    try:
-        if hasattr(st, "secrets") and "aws" in st.secrets:
-             return boto3.Session(
-                AWS_ACCESS_KEY_ID =st.secrets["aws"]["AWS_ACCESS_KEY_ID"],
-                AWS_SECRET_ACCESS_KEY =st.secrets["aws"]["AWS_SECRET_ACCESS_KEY"],
+    """
+    Tenta criar sessão AWS de forma robusta:
+    1. Via st.secrets (prioridade)
+    2. Via variáveis de ambiente ou ~/.aws/credentials (boto3 padrão)
+    """
+    # 1. Tenta via secrets.toml
+    if hasattr(st, "secrets") and "aws" in st.secrets:
+        try:
+            return boto3.Session(
+                aws_access_key_id=st.secrets["aws"]["aws_access_key_id"],
+                aws_secret_access_key=st.secrets["aws"]["aws_secret_access_key"],
                 aws_session_token=st.secrets["aws"].get("aws_session_token"),
-                REGION_NAME =st.secrets["aws"]["REGION_NAME"]
+                region_name=st.secrets["aws"]["region_name"]
             )
+        except Exception:
+            pass # Se falhar, tenta o próximo método
+            
+    # 2. Tenta via Boto3 Standard (Environment Vars ou AWS CLI)
+    # Isso permite que funcione se você tiver rodado 'aws configure' no terminal
+    try:
+        session = boto3.Session()
+        # Teste simples para ver se a sessão tem credenciais válidas
+        if session.get_credentials() is not None:
+            return session
     except Exception:
-        return None
+        pass
+        
     return None
 
 @st.cache_data(ttl=600, show_spinner=False)

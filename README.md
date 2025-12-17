@@ -78,6 +78,16 @@ Bash
 streamlit run app.py
 Acesse no navegador: http://localhost:8501
 
+pip install as bibliotecas abaixo:
+import streamlit as st
+import awswrangler as wr
+import boto3
+import pandas as pd
+import plotly.express as px
+import random
+import numpy as np
+import os as os
+
 ## Estrutura de Dados (JSON Schema)
 O Frontend envia os dados no seguinte formato para o Data Lake, garantindo compatibilidade com os processos de ETL futuros:
 

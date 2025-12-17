@@ -7,15 +7,15 @@ import random
 import numpy as np
 import os as os
 
-# --- COLE ISSO LOGO APÓS OS IMPORTS PARA TESTAR ---
-import streamlit as st
-st.write("📂 Diretório atual:", os.getcwd())
-st.write("🔑 Secrets encontrados:", st.secrets.keys() if hasattr(st, "secrets") else "Nenhum")
-if hasattr(st, "secrets") and "aws" in st.secrets:
-    st.success("✅ A chave [aws] foi lida!")
-else:
-    st.error("❌ O arquivo secrets.toml não foi lido ou falta a seção [aws].")
+# --- COLE ISSO LOGO APÓS OS IMPORTS PARA TESTAR O ACESSO A AWS---
+#import streamlit as st
+#st.write("Diretório atual:", os.getcwd())
+#st.write("Secrets encontrados:", st.secrets.keys() if hasattr(st, "secrets") else "Nenhum")
+#if hasattr(st, "secrets") and "aws" in st.secrets:
+ #   st.success("A chave [aws] foi lida!")
+##   st.error(" O arquivo secrets.toml não foi lido ou falta a seção [aws].")
 # --------------------------------------------------
+
 # ==============================================================================
 # 1. CONFIGURAÇÃO DA PÁGINA E ESTILO
 # ==============================================================================
